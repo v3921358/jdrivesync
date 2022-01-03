@@ -39,10 +39,10 @@ public class FileSystemAdapter {
 		if (LOGGER.isLoggable(Level.FINE)) {
 			if (files.length > 0) {
 				for (File file : files) {
-					LOGGER.log(Level.FINE, "Directory '" + directory.getAbsolutePath() + "' contains file '" + file.getAbsolutePath() + "'.");
+					LOGGER.log(Level.FINE, "目錄 '" + directory.getAbsolutePath() + "' 包含檔案 '" + file.getAbsolutePath() + "'.");
 				}
 			} else {
-				LOGGER.log(Level.FINE, "Directory '" + directory.getAbsolutePath() + "' does not contain any files.");
+				LOGGER.log(Level.FINE, "目錄 '" + directory.getAbsolutePath() + "' 不包含任何檔案.");
 			}
 		}
 		Arrays.sort(files, (f1, f2) -> f1.getName().compareTo(f2.getName()));

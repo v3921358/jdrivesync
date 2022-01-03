@@ -30,7 +30,7 @@ public class HtmlReport implements Report {
         String headerPath = "/report/header.tpl";
         InputStream resourceAsStream = HtmlReport.class.getResourceAsStream(headerPath);
         if(resourceAsStream == null) {
-            throw new JDriveSyncException(JDriveSyncException.Reason.IOException, "Could not load HTML header '" + headerPath + "' from classpath.");
+            throw new JDriveSyncException(JDriveSyncException.Reason.IOException, "無法加載 HTML  '" + headerPath + "' from classpath.");
         }
         String header = streamToString(resourceAsStream);
         try {

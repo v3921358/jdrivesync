@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2011 Google Inc.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
@@ -42,7 +42,7 @@ public class Authorize {
 
     public Credential authorize() {
         String authorizationUrl = new AuthorizationCodeRequestUrl(AUTHORIZATION_SERVER_URL, OAuth2ClientCredentials.CLIENT_ID).setRedirectUri(URN_IETF_WG_OAUTH_2_0_OOB).setScopes(SCOPES).build();
-        System.out.println("Please point your browser to the following URL and copy the access token provided after having authorized this application to access your Google Drive:");
+        System.out.println("請將您的瀏覽器指向以下 URL，並在授權此應用程序訪問您的 Google Drive 後復制提供的訪問令牌:");
         System.out.println(authorizationUrl);
         String code = readCode();
         AuthorizationCodeFlow codeFlow = new AuthorizationCodeFlow.Builder(
@@ -55,21 +55,21 @@ public class Authorize {
             TokenResponse response = codeFlow.newTokenRequest(code).setScopes(SCOPES).setRedirectUri(URN_IETF_WG_OAUTH_2_0_OOB).execute();
             return codeFlow.createAndStoreCredential(response, null);
         } catch (IOException e) {
-            throw new JDriveSyncException(JDriveSyncException.Reason.IOException, "Failed to execute token request and store credentials: " + e.getMessage(), e);
+            throw new JDriveSyncException(JDriveSyncException.Reason.IOException, "無法執行令牌請求並存儲憑據： " + e.getMessage(), e);
         }
     }
 
     private String readCode() {
         try {
-            System.out.println("Please enter the code: ");
+            System.out.println("請輸入代碼(Code): ");
             BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
             String line = reader.readLine();
             if (line != null && line.length() > 0) {
                 return line;
             }
-            throw new JDriveSyncException(JDriveSyncException.Reason.IllegalStateException, "Please provide a valid code.");
+            throw new JDriveSyncException(JDriveSyncException.Reason.IllegalStateException, "請提供有效代碼.");
         } catch (IOException e) {
-            throw new JDriveSyncException(JDriveSyncException.Reason.IOException, "Failed to read from stdin: " + e.getMessage(), e);
+            throw new JDriveSyncException(JDriveSyncException.Reason.IOException, "無法從標準輸入讀取: " + e.getMessage(), e);
         }
     }
 }

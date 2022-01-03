@@ -43,7 +43,7 @@ public class CredentialStore {
 			File file = getAuthenticationFile(options);
             properties.store(new FileWriter(file), "Properties of jdrivesync.");
         } catch (IOException e) {
-            throw new JDriveSyncException(JDriveSyncException.Reason.IOException, "Failed to store properties file: " + e.getMessage(), e);
+            throw new JDriveSyncException(JDriveSyncException.Reason.IOException, "無法存儲Properties文件: " + e.getMessage(), e);
         }
     }
 
@@ -59,7 +59,7 @@ public class CredentialStore {
         try {
 			File file = getAuthenticationFile(options);
             if(!file.exists() || !file.canRead()) {
-                LOGGER.log(Level.FINE, "Cannot find or read properties file. Returning empty credentials.");
+                LOGGER.log(Level.FINE, "無法找到或讀取屬性文件。 返回空憑據.");
                 return Optional.empty();
             }
             properties.load(new FileReader(file));
@@ -71,7 +71,7 @@ public class CredentialStore {
             credential.setRefreshToken(properties.getProperty(PROP_REFRESH_TOKEN));
             return Optional.of(credential);
         } catch (IOException e) {
-            throw new JDriveSyncException(JDriveSyncException.Reason.IOException, "Failed to load properties file: " + e.getMessage(), e);
+            throw new JDriveSyncException(JDriveSyncException.Reason.IOException, "無法載入Properties文件: " + e.getMessage(), e);
         }
     }
 

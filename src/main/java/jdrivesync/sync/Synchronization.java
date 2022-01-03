@@ -54,7 +54,7 @@ public class Synchronization {
 			public WalkerVisitorResult visitDirectory(SyncDirectory syncDirectory) {
 				try {
 					WalkerVisitorResult result = WalkerVisitorResult.Continue;
-					LOGGER.log(Level.FINE, "visitDirectory (absolute path: '" + syncDirectory.getLocalFile().get().getAbsolutePath() + "';relative path: '" + syncDirectory.getPath() + "')");
+					LOGGER.log(Level.FINE, "訪問目錄 (絕對路徑: '" + syncDirectory.getLocalFile().get().getAbsolutePath() + "';相對路徑: '" + syncDirectory.getPath() + "')");
 					String parentId = determineParentId(syncDirectory);
 					if (parentId != null) {
 						List<com.google.api.services.drive.model.File> children = googleDriveAdapter.listChildren(parentId);
@@ -91,7 +91,7 @@ public class Synchronization {
 							throw jDriveSyncException;
 						}
 					}
-					LOGGER.log(Level.WARNING, "Skipping directory '" + syncDirectory.getPath() + "' because an exception occurred: " + e.getMessage(), e);
+					LOGGER.log(Level.WARNING, "跳過目錄 '" + syncDirectory.getPath() + "' 因為發生了異常: " + e.getMessage(), e);
 					ReportFactory.getInstance(options).log(new ReportEntry(syncDirectory.getPath(), ReportEntry.Status.Error, ReportEntry.Action.Skipped, e.getMessage()));
 					return WalkerVisitorResult.SkipSubtree;
 				}
@@ -104,26 +104,26 @@ public class Synchronization {
 					try {
 						if (!syncItem.getRemoteFile().isPresent()) {
 							if (syncItem instanceof SyncFile) {
-								LOGGER.log(Level.FINE, "Storing new file '" + syncItem.getPath() + "'.");
+								LOGGER.log(Level.FINE, "存儲新文件 '" + syncItem.getPath() + "'.");
 								googleDriveAdapter.store((SyncFile) syncItem);
 								ReportFactory.getInstance(options).log(new ReportEntry(syncItem.getPath(), ReportEntry.Status.Synchronized, ReportEntry.Action.Created));
 							} else if (syncItem instanceof SyncDirectory) {
-								LOGGER.log(Level.FINE, "Storing new directory '" + syncItem.getPath() + "'.");
+								LOGGER.log(Level.FINE, "存儲新目錄 '" + syncItem.getPath() + "'.");
 								googleDriveAdapter.store((SyncDirectory) syncItem);
 								ReportFactory.getInstance(options).log(new ReportEntry(syncItem.getPath(), ReportEntry.Status.Synchronized, ReportEntry.Action.Created));
 							} else {
-								LOGGER.log(Level.FINE, "Type of syncItem is not supported: " + syncItem.getClass().getName());
+								LOGGER.log(Level.FINE, "不支持同步項類型: " + syncItem.getClass().getName());
 							}
 						}
 					} catch (Exception e) {
-						LOGGER.log(Level.WARNING, "Skipping file/directory '" + syncItem.getPath() + "' because an exception occurred: " + e.getMessage(), e);
+						LOGGER.log(Level.WARNING, "跳過文件/目錄 '" + syncItem.getPath() + "' 因為發生了異常: " + e.getMessage(), e);
 						ReportFactory.getInstance(options).log(new ReportEntry(syncItem.getPath(), ReportEntry.Status.Error, ReportEntry.Action.Skipped, e.getMessage()));
 					}
 				}
 			}
 
 			private void processRemoteChildNotFound(com.google.api.services.drive.model.File remoteChild, SyncDirectory syncDirectory) {
-				LOGGER.log(Level.FINE, "Deleting remote file/directory '" + remoteChild.getName() + "' because locally it does not exist any more.");
+				LOGGER.log(Level.FINE, "刪除雲端文件/目錄 '" + remoteChild.getName() + "' 因為在本地文件/目錄已被移除.");
 				if (googleDriveAdapter.isDirectory(remoteChild)) {
 					googleDriveAdapter.deleteDirectory(remoteChild);
 					ReportFactory.getInstance(options).log(new ReportEntry(syncDirectory.getPath() + "/" + remoteChild.getName(), ReportEntry.Status.Synchronized, ReportEntry.Action.Deleted));
@@ -139,7 +139,7 @@ public class Synchronization {
 				SyncItem syncItemFound = null;
 				if (googleDriveAdapter.isDirectory(remoteChild)) {
 					if (!(syncItem instanceof SyncDirectory)) {
-						LOGGER.log(Level.FINE, "Deleting remote directory '" + remoteChild.getName() + "' because locally it is a file (" + syncItem.getPath() + ").");
+						LOGGER.log(Level.FINE, "刪除雲端目錄 '" + remoteChild.getName() + "' 因為在本地它是個檔案 (" + syncItem.getPath() + ").");
 						googleDriveAdapter.deleteDirectory(remoteChild);
 						if (syncItem instanceof SyncFile) {
 							SyncFile syncFile = (SyncFile) syncItem;
@@ -156,7 +156,7 @@ public class Synchronization {
 				} else {
 					if (syncItem instanceof SyncDirectory) {
 						if (!googleDriveAdapter.isGoogleAppsDocument(remoteChild)) {
-							LOGGER.log(Level.FINE, "Deleting remote file '" + remoteChild.getName() + "' because locally it is a directory (" + syncItem.getPath() + ").");
+							LOGGER.log(Level.FINE, "刪除雲端文件 '" + remoteChild.getName() + "' 因為在本地它是個目錄 (" + syncItem.getPath() + ").");
 							googleDriveAdapter.deleteFile(remoteChild);
 							googleDriveAdapter.store((SyncDirectory) syncItem);
 							syncItem.setRemoteFile(Optional.of(remoteChild));
@@ -176,13 +176,13 @@ public class Synchronization {
 							long sizeLocal = attr.size();
 							Long sizeRemote = remoteChild.getSize() == null ? 0L : remoteChild.getSize();
 							if (!datesAreEqual(modifiedDateLocal.toMillis(), modifiedDateRemote.getValue(), syncItem)) {
-								LOGGER.log(Level.FINE, "Last modification dates are not equal for file '" + syncItemFound.getPath() + "' (local: " + DATE_FORMAT.format(new Date(modifiedDateLocal.toMillis())) + "; remote: " + DATE_FORMAT.format(new Date(modifiedDateRemote.getValue())) + "). Checking MD5 checksums.");
+								LOGGER.log(Level.FINE, "文件的最後修改日期不同 '" + syncItemFound.getPath() + "' (本地: " + DATE_FORMAT.format(new Date(modifiedDateLocal.toMillis())) + "; 雲端: " + DATE_FORMAT.format(new Date(modifiedDateRemote.getValue())) + "). 檢查 MD5 校驗.");
 								performChecksumCheck(syncItemFound, localFile, true);
 							} else if(sizeLocal != sizeRemote) {
-								LOGGER.log(Level.FINE, "File sizes are not equal for file '" + syncItemFound.getPath() + "' (local: " + sizeLocal + "; remote: " + sizeRemote + "). Checking MD5 checksums.");
+								LOGGER.log(Level.FINE, "文件大小不相等 '" + syncItemFound.getPath() + "' (本地: " + sizeLocal + "; 雲端: " + sizeRemote + "). 檢查 MD5 校驗.");
 								performChecksumCheck(syncItemFound, localFile, true);
 							} else {
-								LOGGER.log(Level.FINE, "Last modification dates and sizes are equal for file '" + syncItemFound.getPath() + "' (local: " + DATE_FORMAT.format(new Date(modifiedDateLocal.toMillis())) + ", " + sizeLocal + " bytes; remote: " + DATE_FORMAT.format(new Date(modifiedDateRemote.getValue())) + ", " + sizeRemote + " bytes). Not updating file.");
+								LOGGER.log(Level.FINE, "文件的最後修改日期和大小相同 '" + syncItemFound.getPath() + "' (本地: " + DATE_FORMAT.format(new Date(modifiedDateLocal.toMillis())) + ", " + sizeLocal + " bytes; 雲端: " + DATE_FORMAT.format(new Date(modifiedDateRemote.getValue())) + ", " + sizeRemote + " bytes). 不更新文件.");
 								ReportFactory.getInstance(options).log(new ReportEntry(syncItemFound.getPath(), ReportEntry.Status.Synchronized, ReportEntry.Action.Unchanged));
 							}
 						}
@@ -194,7 +194,7 @@ public class Synchronization {
 			private String determineParentId(SyncDirectory syncDirectory) {
 				String parentId = "root";
 				if (syncDirectory.isRootDirectory()) {
-					LOGGER.log(Level.FINE, "Getting remote file for root directory.");
+					LOGGER.log(Level.FINE, "獲取根目錄的遠程文件.");
 					com.google.api.services.drive.model.File rootFile = googleDriveAdapter.getFile(parentId);
 					if (options.getRemoteRootDir().isPresent()) {
 						rootFile = getRootFileForRemotePath(rootFile, options.getRemoteRootDir().get());
@@ -212,7 +212,7 @@ public class Synchronization {
 						if (remoteFileOptional.isPresent()) {
 							parentId = remoteFileOptional.get().getId();
 						} else {
-							LOGGER.log(Level.FINE, "Skipping directory '" + syncDirectory.getPath() + "' because remoteFile is not set.");
+							LOGGER.log(Level.FINE, "跳過目錄 '" + syncDirectory.getPath() + "' 因為沒有設置 remoteFile.");
 							return null;
 						}
 					}

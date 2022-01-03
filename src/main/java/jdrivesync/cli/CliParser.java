@@ -15,28 +15,28 @@ import java.util.Optional;
 
 public class CliParser {
 	private enum Argument {
-		Help("-h", "--help", "Prints this help."),
-		LocalRootDir("-l", "--local-dir", "Provides the local directory that should be synchronized.", "<local-dir>"),
-		RemoteRootDir("-r", "--remote-dir", "Provides the remote directory that should be synchronized.", "<remote-dir>"),
-		AuthenticationFile("-a", "--authentication-file", "Use given authentication file instead of default one (~/.jdrivesync).", "<auth-file>"),
-		DryRun(null, "--dry-run", "Simulates all data manipulating operations (dry run)."),
-		Delete(null, "--delete", "Deletes all files instead of moving them to trash."),
-		Checksum("-c", "--checksum", "Use MD5 checksum instead of last modification timestamp of file."),
+		Help("-h", "--help", "輸出說明."),
+		LocalRootDir("-l", "--local-dir", "提供應該同步的本地目錄.", "<local-dir>"),
+		RemoteRootDir("-r", "--remote-dir", "提供應該同步的遠程目錄.", "<remote-dir>"),
+		AuthenticationFile("-a", "--authentication-file", "使用指定的身份驗證文件而不是預設的 (~/.jdrivesync).", "<auth-file>"),
+		DryRun(null, "--dry-run", "模擬所有操作 (dry run)."),
+		Delete(null, "--delete", "刪除所有文件而不是將它們移至垃圾箱."),
+		Checksum("-c", "--checksum", "使用 MD5 校驗和而不是文件的最後修改時間戳."),
 		IgnoreFile("-i", "--ignore-file", "Provides a file with newline separated file and/or path name patterns that should be ignored.", "<ignore-file>"),
-		SyncUp("-u", "--up", "Synchronization is performed from the local to the remote site (default)."),
-		SyncDown("-d", "--down", "Synchronization is performed from the remote to the local site."),
-		HtmlReport(null, "--html-report", "Creates an HTML report of the synchronization."),
-		MaxFileSize("-m", "--max-file-size", "Provides the maximum file size in MB.", "<maxFileSize>"),
-		HttpChunkSize(null, "--http-chunk-size", "The size of a chunk in MB used for chunked uploads (default: 10MB)."),
-		NetworkNumberOfReries(null, "--network-number-of-retries", "The number of times how often a request is retried (default: 3)."),
-		NetworkSleepBetweenRetries(null, "--network-sleep-between-retries", "The number of seconds to sleep between retries (default: 10)."),
-		Verbose("-v", "--verbose", "Verbose output"),
-		LogFile(null, "--log-file", "The location for the log file.", "<log-file>"),
-		NoDelete(null, "--no-delete", "Do not delete files."),
-		Doc(null,"--doc", "Google doc export/import format (default:Open Office doc).","application/vnd.oasis.opendocument.text"),
-		Sheets(null,"--sheet","Google sheet export/import format (default:Open Office sheet).","application/x-vnd.oasis.opendocument.spreadsheet"),
-		Slides(null,"--slides","Google slides export/import format (default:Open Office presentation).","application/vnd.oasis.opendocument.presentation"),
-		Drowing(null,"--drowing","Google drowing export/import format (default:JPEG).","image/jpeg");
+		SyncUp("-u", "--up", "從本地到遠程進行同步 (預設)."),
+		SyncDown("-d", "--down", "從遠程到本地進行同步"),
+		HtmlReport(null, "--html-report", "創建同步的 HTML 報告."),
+		MaxFileSize("-m", "--max-file-size", "提供最大文件大小（以 MB 為單位）.", "<maxFileSize>"),
+		HttpChunkSize(null, "--http-chunk-size", "用於分塊上傳的塊大小（以 MB 為單位） (預設: 10MB)."),
+		NetworkNumberOfReries(null, "--network-number-of-retries", "請求退出的次數 (預設: 3)."),
+		NetworkSleepBetweenRetries(null, "--network-sleep-between-retries", "重試之間間隔的秒數 (預設: 10)."),
+		Verbose("-v", "--verbose", "詳細輸出"),
+		LogFile(null, "--log-file", "日誌文件的位置.", "<log-file>"),
+		NoDelete(null, "--no-delete", "不要刪除文件."),
+		Doc(null,"--doc", "Google 文件(Doc) 導出/導入格式 (預設:Open Office doc).","application/vnd.oasis.opendocument.text"),
+		Sheets(null,"--sheet","Google 試算表(Sheet) 導出/導入格式 format (預設:Open Office sheet).","application/x-vnd.oasis.opendocument.spreadsheet"),
+		Slides(null,"--slides","Google 簡報(Slides) 導出/導入格式 format (預設:Open Office presentation).","application/vnd.oasis.opendocument.presentation"),
+		Drowing(null,"--drowing","Google 繪圖(Drawing) 導出/導入格式 (預設:JPEG).","image/jpeg");
 		//Password("-p", "--password", "The password used to encrypt/decrypt the files.", "<password>"),
 		//EncryptFile("-e", "--encrypt-files", "Provides a file with newline separated file and/or path name patterns that should be encrypted.", "<encrypt-file>");
 		private final String shortOption;
@@ -133,7 +133,7 @@ public class CliParser {
 				try {
 					maxFileSizeInteger = Long.valueOf(option);
 				} catch (NumberFormatException e) {
-					throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, "Argument for option '" + arg + "' is not an integer.");
+					throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, "Argument for option '" + arg + "' 不是整數。");
 				}
 				options.setMaxFileSize(Optional.of(maxFileSizeInteger * Constants.MB));
 			} else if (argument == Argument.HttpChunkSize) {
@@ -142,12 +142,12 @@ public class CliParser {
 				try {
 					httpChunkSizeMB = Long.valueOf(option);
 				} catch (NumberFormatException e) {
-					throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, "Argument for option '" + arg + "' is not an integer.");
+					throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, "Argument for option '" + arg + "' 不是整數。");
 				}
 				long httpChunkSizeBytes = httpChunkSizeMB * Constants.MB;
 				httpChunkSizeBytes = (httpChunkSizeBytes / 256) * 256; // chunk size must be multiple of 256
 				if (httpChunkSizeMB <= 0) {
-					throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, "Argument for option '" + arg + "' is a negative integer or zero.");
+					throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, "Argument for option '" + arg + "' 是一個負數或零。");
 				}
 				options.setHttpChunkSizeInBytes(httpChunkSizeBytes);
 			} else if (argument == Argument.NetworkNumberOfReries) {
@@ -156,10 +156,10 @@ public class CliParser {
 				try {
 					networkNumberOfRetries = Integer.valueOf(option);
 				} catch (NumberFormatException e) {
-					throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, "Argument for option '" + arg + "' is not an integer.");
+					throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, "Argument for option '" + arg + "' 不是整數。");
 				}
 				if (networkNumberOfRetries < 0) {
-					throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, "Argument for option '" + arg + "' is a negative integer.");
+					throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, "Argument for option '" + arg + "' 是一個負數或零。");
 				}
 				options.setNetworkNumberOfAttempts(networkNumberOfRetries);
 			} else if (argument == Argument.NetworkSleepBetweenRetries) {
@@ -168,10 +168,10 @@ public class CliParser {
 				try {
 					optionAsInteger = Integer.valueOf(option);
 				} catch (NumberFormatException e) {
-					throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, "Argument for option '" + arg + "' is not an integer.");
+					throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, "Argument for option '" + arg + "' 不是整數。");
 				}
 				if (optionAsInteger <= 0) {
-					throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, "Argument for option '" + arg + "' is a negative integer or zero.");
+					throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, "Argument for option '" + arg + "' 是一個負數或零。");
 				}
 				options.setNetworkSleepBetweenAttempts(optionAsInteger * 1000);
 			} else if (argument == Argument.Verbose) {
@@ -180,17 +180,17 @@ public class CliParser {
 				String option = getOptionWithArgument(arg, sae);
 				Path path = Paths.get(option);
 				if (Files.isDirectory(path)) {
-					throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, "Argument for option '" + arg + "' is a directory and not a file.");
+					throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, "Argument for option '" + arg + "' 是目錄而不是文件.");
 				}
 				if (!Files.exists(path)) {
 					try {
 						path = Files.createFile(path);
 					} catch (IOException e) {
-						throw new JDriveSyncException(JDriveSyncException.Reason.IOException, String.format("Failed to create log file '%s': %s", path.toString(), e.getClass().getSimpleName() + ": " + e.getMessage()), e);
+						throw new JDriveSyncException(JDriveSyncException.Reason.IOException, String.format("未能創建日誌文件 '%s': %s", path.toString(), e.getClass().getSimpleName() + ": " + e.getMessage()), e);
 					}
 				}
 				if (!Files.isWritable(path)) {
-					throw new JDriveSyncException(JDriveSyncException.Reason.IOException, String.format("The log file '%s' is not writable.", path.toString()));
+					throw new JDriveSyncException(JDriveSyncException.Reason.IOException, String.format("日誌文件 '%s' 無法寫入.", path.toString()));
 				}
 				options.setLogFile(Optional.of(path));
 			} else if (argument == Argument.NoDelete) {
@@ -208,7 +208,7 @@ public class CliParser {
 				String drowingExportMimeType = getOptionWithArgument(arg, sae);
 				options.setDrowingMimeType(Optional.of(drowingExportMimeType));
 			} else {
-				throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, "The parameter '" + arg + "' is not valid.");
+				throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, "參數 '" + arg + "' 不可用.");
 			}
 		}
 		checkForMandatoryOptions(options);
@@ -228,13 +228,13 @@ public class CliParser {
 	private File validateLocalRootDirArg(String localRootDir) {
 		File file = new File(localRootDir);
 		if (!file.exists()) {
-			throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, String.format("'%s' does not exist.", localRootDir));
+			throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, String.format("'%s' 不存在.", localRootDir));
 		}
 		if (!file.canRead()) {
-			throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, String.format("Directory '%s' is not readable.", localRootDir));
+			throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, String.format("目錄 '%s' 無法讀取.", localRootDir));
 		}
 		if (!file.isDirectory()) {
-			throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, String.format("'%s' is not a directory.", localRootDir));
+			throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, String.format("'%s' 不是目錄.", localRootDir));
 		}
 		return file;
 	}
@@ -252,7 +252,7 @@ public class CliParser {
 	}
 
 	public static void printHelp() {
-		System.out.println("Available parameters:");
+		System.out.println("可用參數:");
 		for (Argument currentArg : Argument.values()) {
 			System.out.println(currentArg.toString());
 		}
@@ -263,7 +263,7 @@ public class CliParser {
 		boolean valid = true;
 		String message = null;
 		if (!options.getLocalRootDir().isPresent()) {
-			message = "Please specify a local directory that should be synchronized.";
+			message = "請指定要同步的本地目錄.";
 			valid = false;
 		}
 		if (!valid) {
@@ -275,11 +275,11 @@ public class CliParser {
 		if (sae.hasMoreElements()) {
 			String value = sae.nextElement();
 			if (toArgument(value) != null) {
-				throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, String.format("Missing argument for option %s.", option));
+				throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, String.format("缺少選項的參數 %s.", option));
 			}
 			return value;
 		} else {
-			throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, String.format("Missing argument for option %s.", option));
+			throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, String.format("缺少選項的參數 %s.", option));
 		}
 	}
 
@@ -288,15 +288,15 @@ public class CliParser {
 		try {
 			path = Paths.get(filename);
 		} catch (Exception e) {
-			throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, "'" + filename + "' does not denote a valid path: " + e.getMessage(), e);
+			throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, "'" + filename + "' 不是有效路徑: " + e.getMessage(), e);
 		}
 		if (!Files.exists(path)) {
-			throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, "'" + filename + "' does not exist.");
+			throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, "'" + filename + "' 不存在.");
 		}
 		try {
 			return Files.readAllLines(path, Charset.defaultCharset());
 		} catch (IOException e) {
-			throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, "Could not read file '" + path + "':" + e.getMessage(), e);
+			throw new JDriveSyncException(JDriveSyncException.Reason.InvalidCliParameter, "無法讀取檔案 '" + path + "':" + e.getMessage(), e);
 		}
 	}
 }
